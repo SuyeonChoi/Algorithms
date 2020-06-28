@@ -1,10 +1,11 @@
 from collections import deque
+from sys import stdin
 
+input = stdin.readline
 R, C = map(int, input().split())
 maze = list()
 queue = deque()
-JR = 0
-JC = 0
+queue2 = deque()
 fire = [[-1] * C for _ in range(R)]
 escape = [[-1] * C for _ in range(R)]
 for i in range(R):
@@ -14,36 +15,34 @@ for i in range(R):
             queue.append((i, j))
             fire[i][j] = 0
         elif line[j] == 'J':
-            JR = i
-            JC = j
+            queue2.append((i, j))
             escape[i][j] = 0
     maze.append(line)
 
-def BFS():
+def bfs():
+    global queue
     while queue:
         x, y = queue.popleft()
         for dx, dy in (-1, 0), (1, 0), (0, -1), (0, 1):
             nx, ny = dx + x, dy + y
             if nx < 0 or nx >= R or ny < 0 or ny >= C or maze[nx][ny] == '#' or fire[nx][ny] >= 0:
                 continue
-            queue.append((nx, ny))
-            fire[nx][ny] = fire[x][y] + 1
-
-def possible():
-    while queue:
-        x, y = queue.popleft()
+            if fire[nx][ny] == -1 and maze[nx][ny] != '#':
+                queue.append((nx, ny))
+                fire[nx][ny] = fire[x][y] + 1
+    global queue2
+    while queue2:
+        x, y = queue2.popleft()
         for dx, dy in (-1, 0), (1, 0), (0, -1), (0, 1):
             nx, ny = dx + x, dy + y
             if nx < 0 or nx >= R or ny < 0 or ny >= C:
-                return escape[x][y] + 1
-            if escape[nx][ny] >= 0 or maze[nx][ny] == '#':
+                print(escape[x][y] + 1)
+                return
+            if fire[nx][ny] != -1 and fire[nx][ny] <= escape[x][y] + 1:
                 continue
-            if fire[nx][ny] != -1 and fire[nx][ny] <= escape[nx][ny] + 1:
-                continue
-            queue.append((nx, ny))
-            escape[nx][ny] = escape[x][y] + 1
-    return 'IMPOSSIBLE'
+            if escape[nx][ny] == -1 and maze[nx][ny] != '#':
+                queue2.append((nx, ny))
+                escape[nx][ny] = escape[x][y] + 1
+    print('IMPOSSIBLE')
 
-BFS()
-queue.append((JR, JC))
-print(possible())
+bfs()
