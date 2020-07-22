@@ -1,245 +1,67 @@
-import heapq
+import sys
+import copy
+input = sys.stdin.readline
 N, M = map(int, input().split())
-# office = [list(map(int, input().split())) for _ in range(N)]
 office = []
-priority = []
-heap = []
+office2 = [[0]*M for _ in range(N)]
+cctv = []
+unseen = 0
 for i in range(N):
     temp = list(map(int, input().split()))
     office.append(temp)
     for j in range(M):
         if 0 < temp[j] < 6:
-            # priority.append(temp[j])
-            heapq.heappush(heap, (-temp[j], (i, j)))
-def search(x, y):
-    global office
-    if office[x][y] == 0:
-        office[x][y] = '#'
-    if office[x][y] == 6:
-        return -1
+            cctv.append((i, j))
+        if temp[j] == 0:
+            unseen += 1
+dx = [1, 0, -1, 0]
+dy = [0, 1, 0, -1]
+def mark(x, y, dir):
+    global office2, dx, dy
+    dir %= 4
+    while True:
+        x += dx[dir]
+        y += dy[dir]
+        if x < 0 or x >= N or y < 0 or y >= M or office2[x][y] == 6:
+            return
+        if office2[x][y] != 0:
+            continue
+        office2[x][y] = '#'
 
-while heap:
-    temp = heapq.heappop(heap)
-    camera = -temp[0]
-    x, y = temp[1]
-    if camera == 5:
-        for up in reversed(range(x)):
-            if search(up, y) == -1:
-                break
-        for down in range(x+1, N):
-            if search(down, y)== -1:
-                break
-        for left in reversed(range(y)):
-            if search(x, left) == -1:
-                break
-        for right in range(y+1, M):
-            if search(x, right) == -1:
-                break
-    elif camera == 4:
-        cnt = 0
-        check = [0 for _ in range(4)]
-        for up in reversed(range(x)):
-            if office[up][y] == 0:
-                cnt += 1
-            if office[up][y] == 6:
-                break
-        check[0] = cnt
-        cnt = 0
-        for down in range(x + 1, N):
-            if office[down][y] == 0:
-                cnt += 1
-            if office[down][y] == 6:
-                break
-        check[1] = cnt
-        cnt = 0
-        for left in reversed(range(y)):
-            if office[x][left] == 0:
-                cnt += 1
-            if office[x][left] == 6:
-                break
-        check[2] = cnt
-        cnt = 0
-        for right in range(y + 1, M):
-            if office[x][right] == 0:
-                cnt += 1
-            if office[x][right] == 6:
-                break
-        check[3] = cnt
-        for i in range(3):
-            i = check.index(max(check))
-            if i == 0:
-                for up in reversed(range(x)):
-                    if search(up, y) == -1:
-                        break
-            elif i == 1:
-                for down in range(x + 1, N):
-                    if search(down, y) == -1:
-                        break
-            elif i == 2:
-                for left in reversed(range(y)):
-                    if search(x, left) == -1:
-                        break
-            else:
-                for right in range(y + 1, M):
-                    if search(x, right) == -1:
-                        break
-            del check[i]
-    elif camera == 3:
-        check = [0 for _ in range(4)]
-        u = 0
-        for up in reversed(range(x)):
-            if office[up][y] == 0:
-                u += 1
-            if office[up][y] == 6:
-                break
-        d = 0
-        for down in range(x + 1, N):
-            if office[down][y] == 0:
-                d += 1
-            if office[down][y] == 6:
-                break
-        l = 0
-        for left in reversed(range(y)):
-            if office[x][left] == 0:
-                l += 1
-            if office[x][left] == 6:
-                break
-        r = 0
-        for right in range(y + 1, M):
-            if office[x][right] == 0:
-                r += 1
-            if office[x][right] == 6:
-                break
-        check[0] = u+l
-        check[1] = l+d
-        check[2] = d+r
-        check[3] = r+u
-        for i in range(4):
-            i = check.index(max(check))
-            if i == 0:
-                for up in reversed(range(x)):
-                    if search(up, y) == -1:
-                        break
-                for left in reversed(range(y)):
-                    if search(x, left) == -1:
-                        break
-            elif i == 1:
-                for down in range(x + 1, N):
-                    if search(down, y) == -1:
-                        break
-                for left in reversed(range(y)):
-                    if search(x, left) == -1:
-                        break
-            elif i == 2:
-                for down in range(x + 1, N):
-                    if search(down, y) == -1:
-                        break
-                for right in range(y + 1, M):
-                    if search(x, right) == -1:
-                        break
-            else:
-                for right in range(y + 1, M):
-                    if search(x, right) == -1:
-                        break
-                for up in reversed(range(x)):
-                    if search(up, y) == -1:
-                        break
-            del check[i]
-    elif camera == 2:
-        cnt = 0
-        check = [0 for _ in range(2)]
-        for up in reversed(range(x)):
-            if office[up][y] == 0:
-                cnt += 1
-            if office[up][y] == 6:
-                break
-        for down in range(x + 1, N):
-            if office[down][y] == 0:
-                cnt += 1
-            if office[down][y] == 6:
-                break
-        check[0] = cnt
-        cnt = 0
-        for left in reversed(range(y)):
-            if office[x][left] == 0:
-                cnt += 1
-            if office[x][left] == 6:
-                break
-        for right in range(y + 1, M):
-            if office[x][right] == 0:
-                cnt += 1
-            if office[x][right] == 6:
-                break
-        check[1] = cnt
-        i = check.index(max(check))
-        if i == 0:
-            for up in reversed(range(x)):
-                if search(up, y) == -1:
-                    break
-            for down in range(x + 1, N):
-                if search(down, y) == -1:
-                    break
+#방향 결정
+case = 4
+for i in range(len(cctv)):
+    case *= 4
+case //= 4
+for i in range(case):
+    office2 = copy.deepcopy(office)
+    brute = i
+    for j in range(len(cctv)):
+        dir = brute % 4
+        brute //= 4
+        x, y = cctv[j]
+        if office[x][y] == 1:
+            mark(x, y, dir)
+        elif office[x][y] == 2:
+            mark(x, y, dir)
+            mark(x, y, dir+2)
+        elif office[x][y] == 3:
+            mark(x, y, dir)
+            mark(x, y, dir+1)
+        elif office[x][y] == 4:
+            mark(x, y, dir)
+            mark(x, y, dir+1)
+            mark(x, y, dir+2)
         else:
-            for left in reversed(range(y)):
-                if search(x, left) == -1:
-                    break
-            for right in range(y + 1, M):
-                if search(x, right) == -1:
-                    break
-    else:
-        cnt = 0
-        check = [0 for _ in range(4)]
-        for up in reversed(range(x)):
-            if office[up][y] == 0:
+            mark(x, y, dir)
+            mark(x, y, dir+1)
+            mark(x, y, dir+2)
+            mark(x, y, dir+3)
+    cnt = 0
+    for p in range(N):
+        for q in range(M):
+            if office2[p][q] == 0:
                 cnt += 1
-            if office[up][y] == 6:
-                break
-        check[0] = cnt
-        cnt = 0
-        for down in range(x + 1, N):
-            if office[down][y] == 0:
-                cnt += 1
-            if office[down][y] == 6:
-                break
-        check[1] = cnt
-        cnt = 0
-        for left in reversed(range(y)):
-            if office[x][left] == 0:
-                cnt += 1
-            if office[x][left] == 6:
-                break
-        check[2] = cnt
-        cnt = 0
-        for right in range(y + 1, M):
-            if office[x][right] == 0:
-                cnt += 1
-            if office[x][right] == 6:
-                break
-        check[3] = cnt
-        i = check.index(max(check))
-        if i == 0:
-            for up in reversed(range(x)):
-                if search(up, y) == -1:
-                    break
-        elif i == 1:
-            for down in range(x + 1, N):
-                if search(down, y) == -1:
-                    break
-        elif i == 2:
-            for left in reversed(range(y)):
-                if search(x, left) == -1:
-                    break
-        else:
-            for right in range(y + 1, M):
-                if search(x, right) == -1:
-                    break
+    unseen = min(cnt, unseen)
 
-result = 0
-for i in range(N):
-    for j in range(M):
-        if office[i][j] == 0:
-            result += 1
-
-
-print(result)
-
+print(unseen)
