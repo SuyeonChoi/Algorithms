@@ -1,18 +1,26 @@
 def solution(genres, plays):
-    answer = []
-    total = dict()
-    for i in range(len(genres)):
-        if genres[i] in total:
-            total[genres[i]][0] += int(plays[i])
-            total[genres[i]].append(plays[i])
+    _sum = dict()
+    category = dict()
+    for g, p in zip(genres, plays):
+        if g in _sum:
+            _sum[g] += p
+            category[g].append(p)
         else:
-            total[genres[i]] = [plays[i]]
-            total[genres[i]].append(plays[i])
-    print(total)
-    ascending = sorted(total.keys(), key=lambda x: x[1])
-    print(ascending)
-    # for p1, p2 in zip(genres, plays):
+            _sum[g] = p
+            category[g] = [p]
+    priority = sorted(_sum.items(), key=lambda x: x[1], reverse=True)
+    for i in category.keys():
+        category[i].sort(reverse=True)
+        if len(category[i]) > 2:
+            category[i] = category[i][:2]
 
+    answer = []
+    for i in priority:
+        for j in category.keys():
+            if j == i[0]:
+                answer = answer + category[j]
+    for i in range(len(answer)):
+        idx = plays.index(answer[i])
+        answer[i] = idx
+        plays[idx] = -1
     return answer
-
-print(solution(["classic", "pop", "adf","classic"], [500, 700, 600, 150]))
