@@ -29,5 +29,4 @@ def prim(adj, chk):
             if not chk[adj[v2-1][i][0]-1]:
                 heapq.heappush(PQ, (adj[v2-1][i][1], v2, adj[v2-1][i][0]))
     return ans
-# print(chk)
 print(prim(adj, chk))
