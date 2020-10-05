@@ -7,7 +7,7 @@ for i in range(E):
     adj[a-1].append((b, c))
     adj[b-1].append((a, c))
 
-def prim():
+def prim(adj, chk):
     cnt = 0
     ans = 0
     PQ = []
@@ -25,9 +25,9 @@ def prim():
         ans += cost
         if cnt == V-1:
             break
-        for i in range(len(adj[v2])):
-            if not chk[adj[v2][i][0]]:
-                heapq.heappush(PQ, (adj[v2][i][1], v2, adj[v2][i][0]))
+        for i in range(len(adj[v2-1])):
+            if not chk[adj[v2-1][i][0]-1]:
+                heapq.heappush(PQ, (adj[v2-1][i][1], v2, adj[v2-1][i][0]))
     return ans
 # print(chk)
-print(prim())
+print(prim(adj, chk))
