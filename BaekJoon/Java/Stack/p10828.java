@@ -16,7 +16,11 @@ public class p10828 {
             if(cmd.equals("push")){
                 stack.add(Integer.parseInt(st.nextToken()));
             }else if(cmd.equals("top")){
-                sb.append(stack.peek()).append("\n");
+                if(stack.isEmpty()){
+                    sb.append("-1").append("\n");
+                }else{
+                    sb.append(stack.peek()).append("\n");
+                }
             }else if(cmd.equals("size")){
                 sb.append(stack.size()).append("\n");
             }else if(cmd.equals("empty")){
