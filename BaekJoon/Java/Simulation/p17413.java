@@ -6,14 +6,33 @@ import java.util.StringTokenizer;
 public class p17413 {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        char[] str = br.readLine().toCharArray();
+        String[] str = br.readLine().split("");
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < str.length; i++){
-            if(str[i] == ' ') continue;
-            else{
-                System.out.print(str[i]);
+            if(str[i].equals("")) continue;
+            if(str[i].equals("<")){
+                while (!str[i].equals(">")){
+                    sb.append(str[i]);
+                    i++;
+                }
+                sb.append(">");
+                continue;
+            }
+            else if(str[i].equals(" ")) {
+                sb.append(" ");
+            }else{
+                String tmp = "";
+                while(i < str.length && !str[i].equals(" ") && !str[i].equals("<")){
+                    tmp = tmp + str[i++];
+                }
+                sb.append(reverseStr(tmp));
+                if(i < str.length && (str[i].equals("<") ||str[i].equals(" "))) i--;
             }
         }
         System.out.println(sb);
+    }
+
+    private static String reverseStr(String tmp) {
+        return (new StringBuffer(tmp)).reverse().toString();
     }
 }
