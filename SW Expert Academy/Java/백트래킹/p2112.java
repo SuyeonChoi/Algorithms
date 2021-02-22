@@ -9,7 +9,7 @@ public class p2112 {
     static int D, W, K;
     static int[][] film;
     static int minInput;
-    static boolean[] isSelected;
+    static ArrayList<Integer> selected;
     static boolean[] selectedA;
     static int[] idx;
     public static void main(String[] args) throws IOException {
@@ -24,7 +24,7 @@ public class p2112 {
             W = Integer.parseInt(st.nextToken()); //가로크기
             K = Integer.parseInt(st.nextToken()); //합격기준
             film = new int[D][W];
-            isSelected = new boolean[D];
+//            isSelected = new boolean[D];
             for(int i = 0; i < D; i++){
                 st = new StringTokenizer(br.readLine());
                 for(int j = 0; j < W; j++){
@@ -53,7 +53,10 @@ public class p2112 {
 
     private static void combi(int cnt, int st, int pick) {
         if(cnt == pick){ //부분집합 완성. 변경할 막이 선별됨.
-//            idx = new ArrayList<>(); //선별된 층
+            selected = new ArrayList<>(); //선별된 층
+            for(int i = 0; i < pick; i++){
+                selected.add(idx[i]);
+            }
 //            if(idx.size() == 0) return; // 아무것도 선별 안된 경우
             //변경할 특성 선택 => 부분집합(공집합 포함 가능)
             selectedA = new boolean[idx.length];
@@ -72,8 +75,8 @@ public class p2112 {
             //배열 복사
             int[][] tempFilm = new int[D][W];
             for(int i = 0; i < D; i++){
-                if(Arrays.asList(idx).contains(i)){ // 선별된 층에서
-                    if(selectedA[Arrays.asList(idx).indexOf(i)]){ //A 변형에 해당
+                if(selected.contains(i)){ // 선별된 층에서
+                    if(selectedA[selected.indexOf(i)]){ //A 변형에 해당
                         for(int j = 0; j < W; j++){
                             tempFilm[i][j] = 0;
                         }
